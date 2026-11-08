@@ -4,22 +4,37 @@
 [![Dart](https://img.shields.io/badge/Dart-3.10+-blue.svg)](https://dart.dev)
 [![style: flutter_lints](https://img.shields.io/badge/style-flutter__lints-blue.svg)](https://pub.dev/packages/flutter_lints)
 
-# Flutter Agentic Starter
+# SeeMate AI
 
-SeeMate AI is a Flutter Android assistive project using Riverpod 2 for
-and Clean Architecture. Its predictable feature structure, project skills,
-setup wizard, and generated catalog let coding agents start shipping without
-repeated architecture prompts.
+SeeMate AI is an Android assistive application project for blind and low-vision
+Vietnamese-speaking users. Its MVP aims to recognize and find everyday objects,
+announce their left/center/right position in the camera view, and read printed
+Vietnamese text aloud. Core recognition is intended to run on-device; this is
+an assistance tool, not a safe-navigation or obstacle-avoidance system.
 
-## Why this starter?
+The repository originated from **Flutter Agentic Starter** by tsnAnh and retains
+its Flutter, Riverpod 2, Clean Architecture, setup tooling, and shared
+infrastructure. Product requirements are recorded in the
+[PDR](docs/project-overview-pdr.md) and [PRD](tasks/prd-seemate-ai.md).
 
-| Capability | Included |
-| --- | :---: |
-| AI instruction files and project skills | ✅ |
-| Signals-based Clean Architecture | ✅ |
-| Setup wizard and multi-flavor entry points | ✅ |
-| Firebase, analytics, cache, and offline queue | ✅ |
-| Generated Widgetbook catalog | ✅ |
+## Current status
+
+As of 2026-11-08, the project is in the foundation stage. Running the app opens
+the Home reference feature, which loads cities from an HTTP API and shows
+loading, data, localized error, and retry states.
+
+| Area | Repository state |
+| --- | --- |
+| Working reference feature | Home city loading with Riverpod providers/notifier and GoRouter |
+| Inherited infrastructure | DI, networking, cache, HTTP offline-write queue, permission wrappers, shared widgets, and Widgetbook |
+| Localization | English resources; Vietnamese UI and TalkBack task validation are pending |
+| MVP features | Camera, object recognition/search, relative-position guidance, OCR, STT/TTS, and accessibility preferences are not implemented |
+| Product validation | Offline recognition, model quality, speech resources, and target-user acceptance remain unverified |
+
+Starter Firebase/analytics initialization is still present. Disabling the
+telemetry services specified by the PRD is planned work, not an existing privacy
+or offline guarantee. See the [codebase summary](docs/codebase-summary.md),
+[module guides](docs/module-guides.md), and [roadmap](docs/development-roadmap.md).
 
 ## Stack
 
@@ -29,7 +44,12 @@ repeated architecture prompts.
 - Dio + fpdart for typed network results
 - Hive for local cache and offline writes
 - Freezed + json_serializable for immutable wire/domain models
-- Flutter localization, Material 3, Firebase, and PostHog integrations
+- Flutter localization and Material 3
+- Inherited Firebase and PostHog integrations, pending MVP policy changes
+
+Camera, TensorFlow Lite/LiteRT, ML Kit OCR, Vietnamese STT/TTS, and local
+accessibility preferences are target integrations tracked in
+[PRD section 9.6](tasks/prd-seemate-ai.md#96-open-decisions-and-validation-gaps).
 
 ## Architecture
 
@@ -47,7 +67,7 @@ graph TD
 
     subgraph Data
         RI[Repository Implementations] --> A[API / Dio]
-        RI --> C[Cache / Hive]
+        A --> C[Cache / Hive via network infrastructure]
     end
 
     subgraph Core
@@ -56,8 +76,10 @@ graph TD
         DS[Theme / Design System]
     end
 
-    R --> RI
-    DI --> VM
+    RI -. implements .-> R
+    VM --> P[Dependency providers]
+    P --> DI
+    DI --> U
     DI --> RI
     W --> RO
     W --> DS
@@ -66,58 +88,55 @@ graph TD
 Features use `data/domain/presentation` boundaries:
 
 ```text
-Screen -> ViewModel -> Use case -> Repository -> Data source
+Screen -> Riverpod notifier -> Use case -> Repository -> Data source
    ^          |
    +-- AsyncValue<T>
 ```
 
 Riverpod notifiers own feature state and expose it through providers. Screens
-rebuild with `ConsumerWidget` or focused `Consumer` boundaries. Services expose
-plain interfaces or providers for app-wide state,
-such as `SessionManager.active`, `ConnectivityService.online`, and
-`OfflineQueueService.pendingCount`.
+rebuild with `ConsumerWidget` or focused `Consumer` boundaries. GetIt supplies
+use cases and infrastructure through focused dependency providers. The router
+creates `const HomeScreen()`; it does not inject a notifier. Shared services
+expose plain getters and selected event streams; reading a getter alone does
+not create a reactive subscription.
 
 See [System architecture](docs/system-architecture.md) and
 [Code standards](docs/code-standards.md).
 
-## Features
+## Inherited infrastructure
+
+These modules are available in the starter foundation; their presence does not
+mean SeeMate AI's MVP flows or acceptance checks are complete.
 
 | Module | Description | Key packages |
 | --- | --- | --- |
-| **State** | Reactive presentation and service state | Signals |
+| **State** | Home presentation state | Riverpod 2 |
 | **Network** | HTTP client, authentication, caching, retry, and connectivity interceptors | Dio |
-| **Auth** | Session and in-memory token state | Signals, Dart SDK |
+| **Auth** | Session/token helpers; no login feature; storage is memory-only | Dart SDK |
 | **Cache** | Memory and persistent cache policies | Hive, Hive Flutter |
-| **Connectivity** | Network monitoring and offline request replay | Connectivity Plus, Hive |
+| **Connectivity** | Network monitoring and offline HTTP-write replay; distinct from offline AI | Connectivity Plus, Hive |
 | **DI** | Generated dependency injection | GetIt, Injectable |
 | **Router** | Declarative routing and deep links | GoRouter, App Links |
 | **Models** | Immutable wire and domain models | Freezed, json_serializable |
 | **Widgets** | Responsive shared widgets and generated component catalog | ScreenUtil, Widgetbook |
 | **Firebase** | Analytics, Crashlytics, Remote Config, Messaging, and App Check | Firebase |
 | **Analytics** | Composite analytics providers | Firebase Analytics, PostHog |
-| **Permissions** | Runtime permission handling | Permission Handler |
+| **Permissions** | Runtime permission wrappers; camera/microphone workflows pending | Permission Handler |
 | **Forms** | Validated reusable form inputs | Formz |
 | **Lifecycle** | App lifecycle and update checks | Flutter SDK |
 | **Logger** | Debug and production logging | Logger |
-| **Localization** | Generated localized strings | Flutter localization, intl |
+| **Localization** | Generated English strings; Vietnamese pending | Flutter localization, intl |
 
 ## Quick Start
 
 ```sh
-# 1. Use this template, then clone your repository
-git clone https://github.com/YOUR_USERNAME/your-app-name.git
-cd your-app-name
-
-# 2. Install dependencies
+# From the repository root, with Flutter and Android tooling installed
 flutter pub get
 
-# 3. Configure the template
-dart run project_setup
-
-# 4. Generate code
+# Generate code
 dart run build_runner build --delete-conflicting-outputs
 
-# 5. Run the development entry point
+# Run on a connected Android device or emulator
 flutter run -t lib/main.dart
 ```
 
@@ -126,6 +145,8 @@ Available entry points:
 - `lib/main.dart`
 - `lib/main_staging.dart`
 - `lib/main_production.dart`
+
+See the [quick start](docs/quick-start-guide.md) for setup and focused tests.
 
 ## Widgetbook
 
@@ -140,6 +161,8 @@ Run Widgetbook locally in Chrome:
 ```sh
 flutter run -t lib/widgetbook/widgetbook.dart -d chrome
 ```
+
+This is a component-catalog preview; the product MVP targets Android.
 
 ## Project Structure
 
@@ -187,15 +210,28 @@ lib/
 
 1. Add the domain model, repository contract, and use case.
 2. Implement the data source and repository.
-3. Add an injectable `*ViewModel` with private `Signal` state.
-4. Pass the view model from GoRouter into the screen.
-5. Add focused view-model and widget tests.
-6. Regenerate Injectable/Freezed/JSON code.
+3. Bridge the use case from GetIt through a dependency provider.
+4. Add a Riverpod notifier and `ConsumerWidget` screen; let GoRouter build the screen.
+5. Add focused provider-state and widget tests.
+6. Regenerate Injectable/Freezed/JSON code when source annotations change.
 
 The Home feature is the reference implementation:
 `lib/features/home/`.
 
-## Customize the template
+## Identity and optional setup tooling
+
+The product is SeeMate AI; the checked-in technical identity still comes from
+the starter:
+
+- Android app label: `Flutter Agentic Starter`
+- Dart package: `flutter_agentic_starter`
+- Organization: `Example`
+- Android namespace/application ID: `dev.example.flutteragenticstarter`
+
+The inherited setup wizard can rename a derivative project. It is optional and
+is not required to run this checkout; changing the identity is a separate task.
+If used, review its identity and instruction-file changes against this project's
+Riverpod 2 conventions before keeping the generated edits.
 
 ```sh
 dart run project_setup \
@@ -206,13 +242,6 @@ dart run project_setup \
   --yes
 ```
 
-The checked-in template identity is:
-
-- App name: `Flutter Agentic Starter`
-- Dart package: `flutter_agentic_starter`
-- Organization: `Example`
-- Application ID: `dev.example.flutteragenticstarter`
-
 ## Verification
 
 ```sh
@@ -220,6 +249,15 @@ flutter analyze
 flutter test
 flutter build apk --release -t lib/main_staging.dart
 ```
+
+The checked-in [CI workflow](.github/workflows/dart.yml) generates code, runs
+`dart analyze`, and builds the staging APK. Its `flutter test` step is currently
+commented out. It triggers on pushes to `development` or tags matching `v1.*`,
+not pull requests. The Android release build still uses debug signing; these
+commands do not establish MVP acceptance or production release readiness.
+The [evaluation protocol](docs/evaluation-protocol.md) defines planned detection,
+OCR, device, latency, and user checks; execution and pilot-target confirmation
+remain pending.
 
 ## AI Agent Guide
 
@@ -249,10 +287,9 @@ other coding assistants that can read repository instructions.
 ### Example Prompts
 
 ```text
-"Add a profile feature with a Riverpod notifier, use case, repository, and screen"
-"Create an immutable Order model with Freezed and JSON serialization"
-"Add a typed /users API flow with Dio and fpdart"
-"Add a shared widget and cover its states in Widgetbook"
+"Implement the next SeeMate AI roadmap milestone using the PRD acceptance criteria"
+"Add tests for object-key mapping and left/center/right boundaries"
+"Review a new control for Vietnamese TalkBack labels and Stop reading access"
 ```
 
 ## Configuration
@@ -267,16 +304,10 @@ other coding assistants that can read repository instructions.
 
 ### Environment Setup
 
-Each flavor can configure its API, Firebase project, analytics, and feature
-flags through `lib/core/flavor_configurations.dart` and generated DI.
-
-## Showcase
-
-Projects built with this template:
-
-- [bit](https://github.com/tsnAnh/bit) — Flutter reader for Medium articles
-
-Built something with this template? Open a pull request to add it here.
+`lib/core/flavor_configurations.dart` selects the configuration name, API URL,
+and timeouts; all three currently use the same sample API. Generated DI uses
+the selected environment. The entry points are not separate Firebase projects
+or completed native Android product flavors.
 
 ## Contributing
 

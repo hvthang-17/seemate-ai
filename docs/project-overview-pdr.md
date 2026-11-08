@@ -6,7 +6,13 @@ SeeMate AI là ứng dụng Android hỗ trợ người khiếm thị và ngư�
 
 MVP tập trung vào ba luồng hỗ trợ: nhận diện đồ vật, đọc văn bản bằng OCR, và thông báo vị trí trái/giữa/phải. Các chức năng nhận diện cốt lõi được định hướng chạy trên thiết bị sau khi đã có mô hình và dữ liệu ngôn ngữ cần thiết; ảnh camera không được gửi lên máy chủ trong các luồng MVP.
 
-Tài liệu này là tổng quan yêu cầu cấp dự án. Chi tiết user story và tiêu chí nghiệm thu theo từng luồng nằm trong [PRD SeeMate AI](../tasks/prd-seemate-ai.md).
+Tài liệu này là nguồn chuẩn cho tổng quan sản phẩm: vấn đề, người dùng mục tiêu, phạm vi MVP và giới hạn. [PRD SeeMate AI](../tasks/prd-seemate-ai.md) là nguồn chuẩn cho user story, yêu cầu chi tiết, tiêu chí nghiệm thu và chỉ số đánh giá; các mục tương ứng bên dưới chỉ là bản tóm tắt. Khi thay đổi phạm vi hoặc yêu cầu, phải cập nhật hai tài liệu cùng nhau và giải quyết rõ mọi mâu thuẫn trước khi triển khai phần bị ảnh hưởng.
+
+## Trạng thái và cách đọc
+
+Dự án đang ở giai đoạn xây nền từ Flutter Agentic Starter. Home hiện là ví dụ tải danh sách thành phố; các luồng camera, nhận diện đồ vật, OCR và điều khiển/phản hồi giọng nói của MVP chưa được triển khai. Yêu cầu trong tài liệu này mô tả sản phẩm mục tiêu. Hiện trạng mã nguồn được ghi tại [Codebase summary](codebase-summary.md#implementation-status).
+
+Các lựa chọn và bằng chứng kỹ thuật còn thiếu được theo dõi tập trung trong [sổ quyết định chưa chốt của PRD](../tasks/prd-seemate-ai.md#96-open-decisions-and-validation-gaps). Danh sách lớp đồ vật, cấu hình thử nghiệm và thiết bị mục tiêu bên dưới cần được xác nhận bằng mô hình, dữ liệu và benchmark thực tế.
 
 ## Vấn đề và người dùng mục tiêu
 
@@ -35,14 +41,14 @@ SeeMate AI phục vụ chủ yếu người dùng nói tiếng Việt. Trải ng
 
 ## Phạm vi nhận diện ban đầu
 
-| Nhóm | Lớp đồ vật |
-| --- | --- |
-| Đồ dùng cá nhân | Phone, Wallet, Keys, Backpack |
-| Đồ uống | Bottle, Cup |
-| Đồ ăn | Apple, Banana, Bread |
-| Đồ dùng gia đình | Chair, Table, Book, Remote |
-| Thiết bị điện tử | Laptop, Keyboard, Mouse |
-| Vật dụng khác | Clock, Scissors, Umbrella |
+| Nhóm             | Lớp đồ vật                    |
+| ---------------- | ----------------------------- |
+| Đồ dùng cá nhân  | Phone, Wallet, Keys, Backpack |
+| Đồ uống          | Bottle, Cup                   |
+| Đồ ăn            | Apple, Banana, Bread          |
+| Đồ dùng gia đình | Chair, Table, Book, Remote    |
+| Thiết bị điện tử | Laptop, Keyboard, Mouse       |
+| Vật dụng khác    | Clock, Scissors, Umbrella     |
 
 Ví dụ ánh xạ câu lệnh: “Tìm chai nước” → `Bottle`, “Tìm điện thoại” → `Phone`, “Tìm quyển sách” → `Book`, “Tìm chìa khóa” → `Keys`, và “Tìm cái ghế” → `Chair`. Bộ phân tích lệnh chỉ ánh xạ các cụm từ được hỗ trợ, không phải hệ thống hiểu ngôn ngữ tự do.
 
@@ -84,5 +90,7 @@ Repository được khởi tạo từ Flutter Agentic Starter và đã dùng Riv
 5. Không còn lỗi accessibility P0/P1 tại thời điểm đánh giá MVP; `flutter analyze` và các test tự động liên quan phải thành công.
 
 ## Kiểm thử và an toàn người dùng
+
+Phương pháp đo detection/OCR, bộ cảnh, thiết bị, độ trễ và quy trình thử nghiệm người dùng nằm trong [Evaluation protocol](evaluation-protocol.md). Các tiêu chí nghiệm thu ở trên là yêu cầu chờ bằng chứng; ngưỡng chất lượng/hiệu năng bổ sung trong PRD 9.6 và quy mô thử nghiệm đề xuất cần được xác nhận qua pilot. Hiện chưa có kết quả benchmark hoặc nghiệm thu MVP.
 
 Kiểm thử phải bao gồm object detection, OCR, lệnh thoại, Text-to-Speech, quyền camera, chế độ máy bay và TalkBack. Nếu mời người khiếm thị hoặc người có thị lực suy giảm tham gia, cần có sự đồng ý tự nguyện, giải thích mục đích, bảo vệ dữ liệu cá nhân và chỉ dùng các nhiệm vụ an toàn như tìm chai nước trên bàn, tìm điện thoại trong khung hình hoặc đọc nhãn sản phẩm. Không yêu cầu người tham gia thực hiện nhiệm vụ di chuyển nguy hiểm.
