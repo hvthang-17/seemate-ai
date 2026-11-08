@@ -2,6 +2,22 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project Context and Sources
+
+Product: SeeMate AI, an Android assistive app for blind and low-vision
+Vietnamese-speaking users. The repository is currently a Flutter Agentic Starter
+foundation with Home loading cities; camera/AI/voice flows are target features.
+The Dart package remains `flutter_agentic_starter`, Android namespace/app ID
+`dev.example.flutteragenticstarter`, and Android label `Flutter Agentic Starter`.
+
+Read [README.md](README.md) first and follow [AGENTS.md](AGENTS.md), including
+its sources of truth and build/verification commands. The
+[PDR](docs/project-overview-pdr.md) owns scope, the
+[PRD](tasks/prd-seemate-ai.md) owns detailed acceptance and decisions, and the
+[codebase summary](docs/codebase-summary.md) records current implementation.
+Explicit user instructions take precedence. Resolve conflicting requirements
+before implementing the affected behavior; planned features are not completed work.
+
 ## Role & Responsibilities
 
 Your role is to analyze user requirements, delegate tasks to appropriate sub-agents, and ensure cohesive delivery of features that meet specifications and architectural standards.
@@ -58,6 +74,16 @@ Behavioral guidelines to reduce common LLM coding mistakes:
 - For large-screen/adaptive UI changes, verify resizing, both orientations, physical keyboard, mouse/trackpad, and fold/unfold scenarios where possible.
 - Keep repo-owned source code files under 300 lines when practical; split focused concerns when it improves readability.
 
+## SeeMate AI Product Rules
+
+Read and follow the [shared product rules](.claude/rules/development-rules.md#seemate-ai-product-rules).
+Protect camera/OCR/speech data, prioritize Vietnamese TalkBack and interruptible
+TTS, and verify camera/voice/offline behavior on Android. Missing offline STT
+must leave accessible touch controls usable with no automatic cloud fallback.
+Own and clean up camera/microphone/inference resources across mode and lifecycle
+changes. GetIt composes dependencies; Riverpod owns notifiers; routes build screens.
+Authentication and cloud synchronization are outside MVP scope.
+
 ## Project Skills
 
 Claude Code project skills live in `.claude/skills/`.
@@ -112,30 +138,24 @@ When running Python scripts from `.claude/skills/`, use the venv Python interpre
 
 This ensures packages installed by `install.sh` (google-genai, pypdf, etc.) are available.
 
-**IMPORTANT:** When scripts of skills failed, don't stop, try to fix them directly.
+**IMPORTANT:** Diagnose skill-script failures and fix them within the authorized task scope; preserve unrelated tooling and user changes.
 
 ## [IMPORTANT] Consider Modularization
 - If a touched source code file exceeds 300 lines, consider modularizing it when it improves readability
 - Check existing modules before creating new
 - Analyze logical separation boundaries (functions, classes, concerns)
-- Use kebab-case naming with long descriptive names, it's fine if the file name is long because this ensures file names are self-documenting for LLM tools (Grep, Glob, Search)
+- Use lower_snake_case for Dart source filenames, matching the existing repository. Preserve established naming conventions for other file types.
 - Write descriptive code comments
 - After modularization, continue with main task
 - When not to modularize: generated files, Markdown files, plain text files, bash scripts, configuration files, environment variables files, assets, lockfiles, build artifacts, etc.
 
 ## Documentation Management
 
-We keep all important docs in `./docs` folder and keep updating them, structure like below:
-
-```
-./docs
-├── project-overview-pdr.md
-├── code-standards.md
-├── codebase-summary.md
-├── design-guidelines.md
-├── deployment-guide.md
-├── system-architecture.md
-└── project-roadmap.md
-```
+Keep guides in `docs/` and detailed requirements in `tasks/prd-seemate-ai.md`.
+Use the [documentation index](docs/README.md) and
+[development roadmap](docs/development-roadmap.md). UI/accessibility guidance
+is in [code standards](docs/code-standards.md) and the PRD design section.
+Keep current implementation, target design, and benchmark evidence distinct.
+Follow the shared documentation-management workflow when updating these files.
 
 **IMPORTANT:** *MUST READ* and *MUST COMPLY* all *INSTRUCTIONS* in project `./CLAUDE.md`, especially *WORKFLOWS* section is *CRITICALLY IMPORTANT*, this rule is *MANDATORY. NON-NEGOTIABLE. NO EXCEPTIONS. MUST REMEMBER AT ALL TIMES!!!*

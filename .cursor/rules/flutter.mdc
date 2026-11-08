@@ -1,13 +1,30 @@
 ---
-description: Flutter and coding-agent rules for flutter-agentic-starter.
+description: Flutter and coding-agent rules for SeeMate AI.
 globs: ["lib/**/*.dart", "test/**/*.dart", "android/**/*", "ios/**/*", "macos/**/*", "linux/**/*", "windows/**/*", "web/**/*"]
 alwaysApply: false
 ---
 # Flutter Agent Rules
 
+## Project Context and Sources
+
+SeeMate AI targets Android assistance for blind and low-vision Vietnamese-speaking
+users. Current code is a starter foundation with Home loading cities; camera/AI
+and voice flows are planned. Package: `flutter_agentic_starter`; Android
+namespace/app ID: `dev.example.flutteragenticstarter`; label: `Flutter Agentic Starter`.
+
+Read [README.md](../../README.md) first, then [AGENTS.md](../../AGENTS.md) and
+the relevant [PDR](../../docs/project-overview-pdr.md),
+[PRD](../../tasks/prd-seemate-ai.md), [codebase summary](../../docs/codebase-summary.md),
+[code standards](../../docs/code-standards.md), and
+[architecture](../../docs/system-architecture.md). Follow the shared
+[development rules](../../.claude/rules/development-rules.md) and
+[primary workflow](../../.claude/rules/primary-workflow.md).
+Explicit user instructions take precedence; resolve requirement conflicts and
+distinguish target design from implemented/validated behavior.
+
 Use `flutter-agentic-starter` only while implementing Flutter application code
-or its Flutter tests. It does not apply to documentation, setup tooling,
-repository automation, or other non-app maintenance.
+or its Flutter tests or required app-platform integration. It does not apply to
+documentation, setup tooling, repository automation, or other non-app maintenance.
 
 ## Karpathy Guidelines
 
@@ -52,6 +69,18 @@ repository automation, or other non-app maintenance.
 - Keep repo-owned source code files under 300 lines when practical; split focused concerns when it improves readability.
 - Never commit `.env`, tokens, API keys, or generated secret files.
 - Do not revert user changes in dirty worktrees.
+
+## SeeMate AI Product Rules
+
+Read and follow the [shared product rules](../../.claude/rules/development-rules.md#seemate-ai-product-rules).
+Protect camera/OCR/speech data. Prioritize Vietnamese TalkBack, reachable Stop
+reading, interruptible TTS, and accessible touch alternatives when offline STT
+is unavailable; do not fall back to cloud automatically. Own and release
+camera/microphone/inference resources across mode/lifecycle changes. Verify
+camera, speech, permissions, TalkBack, and offline behavior on physical Android
+devices as required by the PRD. GetIt supplies dependencies through providers;
+Riverpod owns notifiers; routes create screens. Authentication/cloud sync are
+outside MVP scope. Use AGENTS.md commands and report unperformed checks honestly.
 
 ## Project Structure
 

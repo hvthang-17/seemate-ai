@@ -1,12 +1,28 @@
 # AGENTS.md
 
-This file provides guidance to OpenCode when working with code in this repository.
+This file provides repository guidance to Codex, Claude Code, OpenCode, Cursor,
+and other coding agents. Explicit user instructions take precedence.
 
 ## Project Overview
 
-**Name:** flutter-agentic-starter
+**Product:** SeeMate AI
 **Type:** Flutter/Dart
-**Description:** SeeMate AI is a Flutter Android assistive application using Riverpod 2, Clean Architecture, and on-device AI integrations.
+**Purpose:** Android assistance for blind and low-vision Vietnamese-speaking users: object recognition/search, relative position, and OCR with spoken feedback.
+**Current stage:** Starter foundation with a Home city-loading example; camera/AI/voice MVP flows are not implemented.
+**Origin:** Flutter Agentic Starter. Current Dart package: `flutter_agentic_starter`; Android namespace/application ID: `dev.example.flutteragenticstarter`; Android app label: `Flutter Agentic Starter`. Do not describe a native/package rename as completed.
+
+## Sources of Truth
+
+Read [README.md](README.md) first, then the documents relevant to the task:
+
+- [PDR](docs/project-overview-pdr.md): problem, users, MVP scope, and exclusions.
+- [PRD](tasks/prd-seemate-ai.md): detailed requirements, acceptance, and section 9.6 decisions pending validation.
+- [Codebase summary](docs/codebase-summary.md): current implementation; confirm claims against source/tests.
+- [Code standards](docs/code-standards.md), [architecture](docs/system-architecture.md), and [quick start](docs/quick-start-guide.md): implementation patterns and commands.
+- [Roadmap](docs/development-roadmap.md): sequence and completion evidence, not proof of implemented features.
+
+Resolve requirement conflicts before implementing affected behavior. Keep PDR
+summaries aligned with PRD changes and distinguish current code from target design.
 
 ## Role & Responsibilities
 
@@ -67,18 +83,41 @@ Your role is to analyze user requirements, delegate tasks to appropriate sub-age
 - For generated code changes, edit source files only, then run `dart run build_runner build --delete-conflicting-outputs`.
 - Treat `.env`, API keys, tokens, and platform secrets as confidential.
 
+## SeeMate AI Priorities
+
+Follow the [shared product rules](.claude/rules/development-rules.md#seemate-ai-product-rules)
+for camera data, TalkBack, speech, lifecycle, model coverage, and Android checks.
+These are implementation requirements; they do not imply the starter already
+meets them. Keep core actions usable without sight, make Stop reading reachable,
+and preserve accessible touch controls when offline speech recognition is absent.
+GetIt composes dependencies; Riverpod owns notifiers and feature state; routes
+create screens. Authentication and cloud synchronization are outside the MVP.
+
+## Build and Verification Commands
+
+Run from the repository root:
+
+```sh
+flutter pub get
+flutter run -t lib/main.dart
+flutter analyze
+flutter test
+flutter build apk --release -t lib/main_staging.dart
+```
+
+Generate only when relevant sources change: `flutter gen-l10n` for ARB changes;
+`dart run build_runner build --delete-conflicting-outputs` for DI/model annotations.
+Use focused tests from the quick start, then the required app-code baseline.
+For documentation-only changes, check links, commands, examples, and consistency.
+Report physical-device checks not performed as unverified; do not claim CI runs
+tests while its `flutter test` step remains commented out.
+
 ## Documentation
 
-Keep all important docs in `./docs` folder:
-
-```
-./docs
-├── project-overview-pdr.md
-├── code-standards.md
-├── codebase-summary.md
-├── design-guidelines.md
-└── system-architecture.md
-```
+Keep project guides in `docs/`; the detailed PRD currently lives in
+`tasks/prd-seemate-ai.md`. Use the [documentation index](docs/README.md).
+UI/accessibility guidance lives in the code standards and PRD design section;
+use those existing sources instead of referring to a separate design guide.
 
 Root workflow files live in `./.claude/rules/`. Keep `AGENTS.md`,
 `CLAUDE.md`, `.cursor/rules/flutter.mdc`, and docs aligned when structure
@@ -86,13 +125,9 @@ changes.
 
 ## External Files
 
-Reference external instruction files in `opencode.json`:
-
-```json
-{
-  "instructions": ["docs/*.md", ".opencode/agents/*.md"]
-}
-```
+The existing [opencode.json](opencode.json) loads root agent files, shared
+workflow rules, Cursor rules, and `docs/*.md`. Also read the linked PRD for
+product work; do not assume that configuration automatically loads `tasks/`.
 
 ## Project Skills
 
