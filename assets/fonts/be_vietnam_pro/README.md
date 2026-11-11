@@ -1,0 +1,1 @@
+Be Vietnam Pro Regular and Bold are from [Google Fonts](https://github.com/google/fonts/tree/main/ofl/bevietnampro) and bundled for offline display of Vietnamese. See [OFL.txt](OFL.txt) for the SIL Open Font License 1.1.

@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
+import 'app_localizations_vi.dart';
 
 // ignore_for_file: type=lint
 
@@ -92,7 +93,10 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('en')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('vi'),
+  ];
 
   /// No description provided for @helloWorld.
   ///
@@ -109,8 +113,62 @@ abstract class AppLocalizations {
   /// No description provided for @homeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Home'**
+  /// **'SeeMate AI'**
   String get homeTitle;
+
+  /// No description provided for @usageGuideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Usage guide'**
+  String get usageGuideTitle;
+
+  /// No description provided for @usageGuideListen.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen in Vietnamese'**
+  String get usageGuideListen;
+
+  /// No description provided for @usageGuideClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close guide'**
+  String get usageGuideClose;
+
+  /// No description provided for @usageGuideText.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to SeeMate AI. Choose Object recognition to hear what the camera sees. Choose Find object and select an item to hear its position in the frame.\n\nTo read printed text, choose Read text, point the camera at the page, then choose Capture and read text. The Stop reading button stops speech.\n\nIf voice commands are available, tap Speak a command, wait for the vibration, then say your command. SeeMate AI is not for navigation or obstacle avoidance.'**
+  String get usageGuideText;
+
+  /// No description provided for @chooseAssistanceMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an action'**
+  String get chooseAssistanceMode;
+
+  /// No description provided for @recognizeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Hear what is in front of you'**
+  String get recognizeDescription;
+
+  /// No description provided for @findDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an object and hear its position'**
+  String get findDescription;
+
+  /// No description provided for @readDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture printed text and hear it aloud'**
+  String get readDescription;
+
+  /// No description provided for @detectionDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Detection details'**
+  String get detectionDetails;
 
   /// No description provided for @homeLoadCities.
   ///
@@ -129,6 +187,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get retry;
+
+  /// No description provided for @modeRecognize.
+  ///
+  /// In en, this message translates to:
+  /// **'Object recognition'**
+  String get modeRecognize;
+
+  /// No description provided for @modeFind.
+  ///
+  /// In en, this message translates to:
+  /// **'Find an object'**
+  String get modeFind;
+
+  /// No description provided for @modeRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read text'**
+  String get modeRead;
+
+  /// No description provided for @modeStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop reading'**
+  String get modeStop;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @selectTargetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select object to find'**
+  String get selectTargetTitle;
+
+  /// No description provided for @cameraPermissionPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'SeeMate AI needs camera permission to recognize objects and read text.'**
+  String get cameraPermissionPrompt;
+
+  /// No description provided for @cameraPermissionDeniedPermanent.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera permission is permanently denied. Please grant permission in device Settings.'**
+  String get cameraPermissionDeniedPermanent;
+
+  /// No description provided for @cameraOpening.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening the camera.'**
+  String get cameraOpening;
+
+  /// No description provided for @cameraPreviewReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera preview is ready.'**
+  String get cameraPreviewReady;
+
+  /// No description provided for @captureText.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture and read text'**
+  String get captureText;
+
+  /// No description provided for @voiceListen.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak a command'**
+  String get voiceListen;
+
+  /// No description provided for @voicePreparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing microphone. Tap to cancel'**
+  String get voicePreparing;
+
+  /// No description provided for @voiceCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening. Tap to cancel'**
+  String get voiceCancel;
+
+  /// No description provided for @voiceOfflineUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline Vietnamese command recognition is unavailable in this build.'**
+  String get voiceOfflineUnavailable;
+
+  /// No description provided for @voiceMicrophoneDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone permission is required for voice commands. You can enable it in Android settings.'**
+  String get voiceMicrophoneDenied;
+
+  /// No description provided for @voiceNotUnderstood.
+  ///
+  /// In en, this message translates to:
+  /// **'Command not understood. Try again.'**
+  String get voiceNotUnderstood;
+
+  /// No description provided for @voiceCaptureRequiresTextMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Read text before saying Capture.'**
+  String get voiceCaptureRequiresTextMode;
+
+  /// No description provided for @ocrCaptureFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not capture an image. Hold the phone steady and try again.'**
+  String get ocrCaptureFailed;
+
+  /// No description provided for @ocrReadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read text from the image. Try again with clearer text.'**
+  String get ocrReadFailed;
+
+  /// No description provided for @offlineVoiceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline Vietnamese speech is unavailable. Install a Vietnamese voice in your device\'s text-to-speech settings.'**
+  String get offlineVoiceUnavailable;
+
+  /// No description provided for @cameraDetectionReady.
+  ///
+  /// In en, this message translates to:
+  /// **'The camera is running.'**
+  String get cameraDetectionReady;
+
+  /// No description provided for @detectionModelUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The local object detection model is unavailable in this build.'**
+  String get detectionModelUnavailable;
+
+  /// No description provided for @detectionInitializationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The object detector could not start. Restart the app to try again.'**
+  String get detectionInitializationFailed;
+
+  /// No description provided for @detectionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Object detection is temporarily unavailable. Try pointing the camera again.'**
+  String get detectionFailed;
+
+  /// No description provided for @detectionWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the first detection result.'**
+  String get detectionWaiting;
+
+  /// No description provided for @detectionBounds.
+  ///
+  /// In en, this message translates to:
+  /// **'Model label: {label}. Frame box (left, top, right, bottom): {coordinates}'**
+  String detectionBounds(String label, String coordinates);
+
+  /// No description provided for @cameraPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'The camera is paused.'**
+  String get cameraPaused;
+
+  /// No description provided for @cameraUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The camera is unavailable. Close other apps using it and try again.'**
+  String get cameraUnavailable;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get openSettings;
+
+  /// No description provided for @noDetectionFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot identify clearly. Please move closer or increase lighting.'**
+  String get noDetectionFeedback;
+
+  /// No description provided for @unsupportedObject.
+  ///
+  /// In en, this message translates to:
+  /// **'This object is not currently supported for search.'**
+  String get unsupportedObject;
+
+  /// No description provided for @ocrEmptyFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'No text detected in image. Please try again with clearer focus.'**
+  String get ocrEmptyFeedback;
+
+  /// No description provided for @speechRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Speech rate'**
+  String get speechRateLabel;
+
+  /// No description provided for @duplicateSuppressionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate announcement suppression (seconds)'**
+  String get duplicateSuppressionLabel;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @savedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings saved successfully'**
+  String get savedSuccess;
+
+  /// No description provided for @saveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save settings'**
+  String get saveError;
+
+  /// No description provided for @settingsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load saved settings. Try again or save the settings shown here.'**
+  String get settingsLoadError;
 }
 
 class _AppLocalizationsDelegate
@@ -142,7 +434,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en'].contains(locale.languageCode);
+      <String>['en', 'vi'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -153,6 +445,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'en':
       return AppLocalizationsEn();
+    case 'vi':
+      return AppLocalizationsVi();
   }
 
   throw FlutterError(
