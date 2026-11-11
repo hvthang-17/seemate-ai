@@ -1,12 +1,14 @@
-# CI workflow for flutter-agentic-starter
+# CI workflow for SeeMate AI
 
 name: Dart
 
 on:
   push:
-    branches: [ "development" ]
+    branches: [ "development", "main" ]
     tags:
       - v1.*
+  pull_request:
+    branches: [ "development", "main" ]
 
 jobs:
   build:
@@ -37,8 +39,8 @@ jobs:
       - name: Analyze project source
         run: dart analyze
 
+      - name: Run tests
+        run: flutter test
+
       - name: Build Flutter staging apk
         run: flutter build apk --release -t lib/main_staging.dart
-
-      # - name: Run tests
-      #   run: flutter test
