@@ -1,5 +1,26 @@
 # Directory Update Log
 
+## 2026-11-11
+
+* **Rollover**: Merged [2026-11-10](/daily/2026-11-10.md) into base memory.
+* **Creation**: Added [2026-11-11](/daily/2026-11-11.md).
+
+## 2026-11-10
+
+* **Rollover**: Merged [2026-11-09](/daily/2026-11-09.md) into base memory.
+* **Creation**: Added [2026-11-10](/daily/2026-11-10.md).
+
+## 2026-11-09
+
+* **Rollover**: Merged [2026-11-08](/daily/2026-11-08.md) into base memory.
+* **Creation**: Added [2026-11-09](/daily/2026-11-09.md).
+
+## 2026-11-08
+
+* **Rollover**: Merged [2026-11-04](/daily/2026-11-04.md) into base memory.
+* **Creation**: Added current daily memory log at [2026-11-08](/daily/2026-11-08.md).
+* **Update**: Recorded fine-tuning strategy for missing classes (Wallet, Keys, Bread) and Realme 5i target physical test device.
+
 ## 2026-11-04
 
 * **Rollover**: Merged the 2026-07-27 daily architecture facts into base memory.

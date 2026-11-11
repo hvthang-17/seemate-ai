@@ -3,9 +3,9 @@ type: Project Memory
 title: Project Requirements
 description: Stable product, architecture, security, and verification requirements.
 tags: [okf-memory, flutter-agentic-starter, requirements]
-timestamp: 2026-07-27T00:00:00+07:00
+timestamp: 2026-11-09T00:00:00+07:00
 memory_category: project-requirements
-merged_through: 2026-07-27
+merged_through: 2026-11-08
 ---
 
 # Current Requirements
@@ -27,3 +27,5 @@ merged_through: 2026-07-27
 * Run `flutter test` after behavior or test changes.
 * Run `dart run build_runner build --delete-conflicting-outputs` after Injectable, Freezed, or JSON model changes.
 * Keep GetIt/Injectable, GoRouter, repositories, Dio, Hive, Freezed, and fpdart as the supporting architecture.
+* Physical target benchmark device: Realme 5i (Qualcomm Snapdragon 665, 3GB/4GB RAM, Android 10 / realme UI 1.0) confirmed as representative test phone.
+* Object detection model strategy: Collect and annotate custom data to fine-tune the model for missing classes (Wallet, Keys, Bread) beyond the COCO baseline.

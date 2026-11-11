@@ -3,9 +3,9 @@ type: Project Memory
 title: Decision Changes
 description: Accepted or superseded decisions that change future implementation choices.
 tags: [okf-memory, flutter-agentic-starter, decisions]
-timestamp: 2026-07-27T00:00:00+07:00
+timestamp: 2026-11-11T00:00:00+07:00
 memory_category: decision-changes
-merged_through: 2026-07-27
+merged_through: 2026-11-10
 ---
 
 # Current Decisions
@@ -18,3 +18,5 @@ merged_through: 2026-07-27
 * Riverpod 2 supersedes Signals 7 for presentation state. Use providers/notifiers and `AsyncValue`; do not mix Signals with Riverpod in a feature.
 * Session authentication is intentionally volatile until platform secure storage is implemented.
 * `signals_lint` is enabled as an analyzer plugin. It requires the compatible Injectable 3 and Freezed 4 prerelease generator line until Freezed 4 is stable.
+* Detection v1 covers 16 EfficientDet-Lite0 classes. Recognition and the target picker share the same catalog. Wallet, Keys, and Bread are deferred to a future model upgrade.
+* `seemateModelDir` selects the local evaluation build that packages MediaPipe Tasks and the exact int8 model and removes the INTERNET permission. The regular build returns a typed missing-model result while privacy and artifact distribution decisions are pending.
