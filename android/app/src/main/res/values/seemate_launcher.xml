@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="seemate_app_name" translatable="false">SeeMate AI</string>
+    <color name="seemate_launcher_background">#183449</color>
+    <color name="seemate_launcher_foreground">#FFD47A</color>
+</resources>

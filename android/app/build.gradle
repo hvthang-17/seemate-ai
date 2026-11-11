@@ -5,6 +5,13 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+def localModelDir = providers.gradleProperty("seemateModelDir").orNull
+def localZipformerModelDir = providers.gradleProperty("seemateZipformerModelDir").orNull
+def localSherpaAar = providers.gradleProperty("seemateSherpaAar").orNull
+if (localZipformerModelDir != null && localSherpaAar == null) {
+    throw new GradleException("Zipformer requires seemateSherpaAar")
+}
+
 android {
     namespace = "dev.example.flutteragenticstarter"
     compileSdk = flutter.compileSdkVersion
@@ -35,10 +42,93 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.debug
+            if (localModelDir != null || localZipformerModelDir != null) {
+                // Keep the vendor SDK's JNI classes intact in the local evaluation APK.
+                minifyEnabled false
+                shrinkResources false
+            }
+        }
+    }
+
+    sourceSets {
+        main.java.srcDir(localModelDir == null ? "src/noDetection/kotlin" : "src/localDetection/kotlin")
+        main.java.srcDir(localZipformerModelDir == null ? "src/noVoiceCommands/kotlin" : "src/localZipformer/kotlin")
+        if (localModelDir != null || localZipformerModelDir != null) {
+            release.manifest.srcFile("src/localDetection/AndroidManifest.xml")
+        }
+    }
+
+    if (localModelDir != null) {
+        androidResources {
+            noCompress 'tflite'
         }
     }
 }
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation "com.google.mlkit:text-recognition:16.0.1"
+}
+
+abstract class StageSeeMateModel extends DefaultTask {
+    @InputFile
+    abstract RegularFileProperty getModelFile()
+
+    @OutputDirectory
+    abstract DirectoryProperty getOutputDirectory()
+
+    @javax.inject.Inject
+    abstract FileSystemOperations getFileSystemOperations()
+
+    @TaskAction
+    void stage() {
+        fileSystemOperations.sync {
+            from(modelFile)
+            into(outputDirectory)
+        }
+    }
+}
+
+if (localModelDir != null) {
+    dependencies {
+        releaseImplementation "com.google.mediapipe:tasks-vision:1.1.0"
+    }
+
+    def model = new File(file(localModelDir), "efficientdet_lite0.tflite")
+    androidComponents {
+        beforeVariants(selector().all(), { variant ->
+            // Local model builds use the release overlay that removes network access.
+            variant.enable = variant.buildType == "release"
+        })
+        onVariants(selector().withBuildType("release"), { variant ->
+            def stageModel = tasks.register(
+                "stage${variant.name.capitalize()}SeeMateDetectionModel",
+                StageSeeMateModel
+            ) {
+                modelFile.fileValue(model)
+            }
+            variant.sources.assets.addGeneratedSourceDirectory(stageModel) { it.outputDirectory }
+        })
+    }
+}
+
+if (localZipformerModelDir != null) {
+    dependencies {
+        implementation files(localSherpaAar)
+    }
+    def voiceModel = new File(file(localZipformerModelDir), "zipformer-vi-30m-int8.zip")
+    androidComponents {
+        onVariants(selector().all(), { variant ->
+            def stageVoiceModel = tasks.register(
+                "stage${variant.name.capitalize()}SeeMateZipformerModel",
+                StageSeeMateModel
+            ) {
+                modelFile.fileValue(voiceModel)
+            }
+            variant.sources.assets.addGeneratedSourceDirectory(stageVoiceModel) { it.outputDirectory }
+        })
+    }
 }
