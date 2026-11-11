@@ -56,6 +56,9 @@ dependencies:
   # Storage
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  shared_preferences: ^2.5.6
+  # Keep the method-channel Android backend while validating JNI on Android 10.
+  shared_preferences_android: 2.4.28
 
   # UI
   infinite_scroll_pagination: ^5.1.1
@@ -72,17 +75,11 @@ dependencies:
   # Permissions
   permission_handler: ^12.0.1
 
+  # Camera
+  camera: ^0.11.4
+
   # Deep Linking
   app_links: ^7.0.0
-
-  # Firebase
-  firebase_core: ^4.6.0
-  firebase_analytics: ^12.2.0
-  firebase_crashlytics: ^5.1.0
-  firebase_remote_config: ^6.3.0
-  firebase_messaging: ^16.1.3
-  firebase_app_check: ^0.4.2
-
   # Analytics
   posthog_flutter: ^5.21.1
 
@@ -102,6 +99,7 @@ dependencies:
   cached_network_image: ^3.4.1
   uuid: ^4.5.3
   package_info_plus: ^8.3.0
+  # 7.5 switches to built-in Kotlin. This Android project uses the legacy DSL.
 
 dev_dependencies:
   flutter_test:
@@ -133,6 +131,14 @@ executables:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - assets/fonts/be_vietnam_pro/OFL.txt
+  fonts:
+    - family: Be Vietnam Pro
+      fonts:
+        - asset: assets/fonts/be_vietnam_pro/BeVietnamPro-Regular.ttf
+        - asset: assets/fonts/be_vietnam_pro/BeVietnamPro-Bold.ttf
+          weight: 700
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

@@ -5,9 +5,6 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
   connectivity_plus
-  firebase_app_check
-  firebase_core
-  firebase_remote_config
   permission_handler_windows
   url_launcher_windows
 )
