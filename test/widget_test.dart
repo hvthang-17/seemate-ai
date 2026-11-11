@@ -1,46 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_agentic_starter/core/error.dart';
 import 'package:flutter_agentic_starter/core/router/router.dart';
-import 'package:flutter_agentic_starter/features/home/domain/models/city.dart';
-import 'package:flutter_agentic_starter/features/home/domain/repositories/city_repository.dart';
-import 'package:flutter_agentic_starter/features/home/domain/use_cases/get_cities.dart';
-import 'package:flutter_agentic_starter/features/home/presentation/home_providers.dart';
+import 'package:flutter_agentic_starter/features/assistance/presentation/assistance_providers.dart';
+import 'package:flutter_agentic_starter/shared/assistance_contracts/assistance_contracts.dart';
 import 'package:flutter_agentic_starter/shared/i18n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fpdart/fpdart.dart';
 
 void main() {
-  testWidgets('app router loads cities with Riverpod', (tester) async {
+  testWidgets('app router loads AssistanceScreen with accessible Vietnamese controls', (tester) async {
+    final fakeCoordinator = FakeSpeechCoordinator();
+    final fakeDetector = FakeObjectDetector();
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          getCitiesProvider.overrideWithValue(GetCities(const _CityRepository())),
+          speechCoordinatorProvider.overrideWithValue(fakeCoordinator),
+          objectDetectorProvider.overrideWithValue(fakeDetector),
         ],
         child: MaterialApp.router(
+          locale: const Locale('vi'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           routerConfig: AppRouter.routerConfig,
         ),
       ),
     );
-    await tester.pump();
-
-    expect(AppRouter.routerConfig.routeInformationProvider.value.uri.path, '/');
-    expect(find.text('Home'), findsOneWidget);
-    expect(find.text('Load cities'), findsOneWidget);
-
-    await tester.tap(find.text('Load cities'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Da Nang'), findsOneWidget);
+    expect(AppRouter.routerConfig.routeInformationProvider.value.uri.path, '/');
+    expect(find.text('SeeMate AI'), findsOneWidget);
+    expect(find.text('Dừng đọc'), findsOneWidget);
+    expect(find.text('Nhận diện đồ vật'), findsOneWidget);
+    expect(find.text('Tìm đồ vật'), findsOneWidget);
+    expect(find.text('Đọc văn bản'), findsOneWidget);
+
+    // Tap Dừng đọc
+    await tester.tap(find.text('Dừng đọc'));
+    await tester.pump();
+    expect(fakeCoordinator.stopCallCount, 1);
   });
-}
-
-final class _CityRepository implements CityRepository {
-  const _CityRepository();
-
-  @override
-  Future<Either<NetworkError, List<City>>> getCities() async =>
-      right(const [City(id: '1', name: 'Da Nang')]);
 }
