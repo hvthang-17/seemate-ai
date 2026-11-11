@@ -4,8 +4,6 @@ import 'package:injectable/injectable.dart';
 
 import '../analytics/analytics_service.dart';
 import '../analytics/composite_analytics_provider.dart';
-import '../analytics/firebase_analytics_provider.dart';
-import '../analytics/posthog_analytics_provider.dart';
 import '../auth/secure_storage_service.dart';
 import '../auth/session_manager.dart';
 import '../cache/cache_manager.dart';
@@ -67,13 +65,9 @@ abstract class RegisterModule {
 
 /// Registers [CompositeAnalyticsProvider] as the [AnalyticsService] singleton.
 ///
-/// Must be called after [configureDependencies] so Firebase/PostHog providers
-/// are already registered as lazySingletons.
+/// SeeMate AI's MVP does not initialize any telemetry provider.
 void registerCompositeAnalytics() {
   getIt.registerLazySingleton<AnalyticsService>(
-    () => CompositeAnalyticsProvider([
-      getIt<FirebaseAnalyticsProvider>(),
-      getIt<PostHogAnalyticsProvider>(),
-    ]),
+    () => CompositeAnalyticsProvider([]),
   );
 }

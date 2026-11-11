@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import '../../di/get_it.dart';
 import '../logger.dart';
 
+@staging
 @production
 @Singleton(as: Logger)
 final class ProductionLogger implements Logger {

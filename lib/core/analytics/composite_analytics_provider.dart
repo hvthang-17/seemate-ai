@@ -13,7 +13,6 @@ import 'analytics_service.dart';
 /// ```dart
 /// getIt.registerLazySingleton<AnalyticsService>(
 ///   () => CompositeAnalyticsProvider([
-///     getIt<FirebaseAnalyticsProvider>(),
 ///     getIt<PostHogAnalyticsProvider>(),
 ///   ]),
 /// );
