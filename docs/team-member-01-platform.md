@@ -115,6 +115,19 @@ release sau lỗi; dispose nhiều lần an toàn; frame cũ bị drop; callback
 bị bỏ qua. Trên máy thật kiểm tra deny/allow/settings/revoke/background/resume.
 **Đạt:** tests pass, camera chạy lại được sau resume và không có frame trong log/cache.
 
+**Hiện trạng local:** màn hỗ trợ mở preview camera sau qua Flutter CameraX
+khi người dùng chọn chế độ. Khi màn bị che hoặc app ra nền, phiên camera đóng.
+Khi quay lại, app kiểm tra quyền trước khi mở lại. Driver có thể cung cấp frame
+YUV420 trong RAM, gồm stride và góc xoay. Phiên chỉ bật phân tích ảnh khi có
+consumer. Bước tích hợp detector và chụp một frame cho OCR còn lại ở N1-04.
+[Flutter camera](https://pub.dev/packages/camera) · [Góc xoay CameraX](https://developer.android.com/media/camera/camerax/orientation-rotation#image-rotation)
+
+**Kiểm tra ngày 2026-11-09:** APK staging khởi động trên Realme 5i
+(`RMX2032`, Android 10). Màn hỗ trợ báo preview sẵn sàng. Android camera
+service xác nhận camera 0 mở, đóng khi bấm Home và mở lại khi quay về app.
+Luồng từ chối và thu hồi quyền đã qua widget test. Kiểm tra hai tình huống đó,
+xoay máy và TalkBack trên điện thoại vẫn còn mở.
+
 ## N1-02 — giao diện truy cập, dùng fake trước
 
 **Đầu vào:** G0/fake; chưa cần N2/N3 adapter thật. **Đầu ra:** UI và widget tests.
@@ -123,6 +136,9 @@ bị bỏ qua. Trên máy thật kiểm tra deny/allow/settings/revoke/backgroun
   chọn vật chỉ đưa danh mục hỗ trợ, không biến nhãn COCO thành lời hứa tính năng.
 - Render idle/loading/data/empty/error/resource-missing riêng; localized prompt
   hướng dẫn người dùng thay vì raw exception. Fake cover đủ trạng thái.
+- N1 hiển thị hướng dẫn tiếng Việt khi nhận diện thiếu tin cậy hoặc ảnh OCR
+  không đọc được (FR-11). Trong onboarding và màn kết quả liên quan, nêu phạm
+  vi hỗ trợ quan sát và giới hạn về dẫn đường, tránh vật cản (FR-15).
 - TalkBack focus theo thứ tự task; không để preview tranh focus với control.
   Vùng chạm, text scaling, nội dung dài, back và Stop phải hoạt động.
 - Settings UI dùng fake repository N3, chứng minh thay đổi/restore/save failure.

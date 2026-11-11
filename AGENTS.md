@@ -9,7 +9,7 @@ and other coding agents. Explicit user instructions take precedence.
 **Type:** Flutter/Dart
 **Purpose:** Android assistance for blind and low-vision Vietnamese-speaking users: object recognition/search, relative position, and OCR with spoken feedback.
 **Current stage:** Starter foundation with a Home city-loading example; camera/AI/voice MVP flows are not implemented.
-**Origin:** Flutter Agentic Starter. Current Dart package: `flutter_agentic_starter`; Android namespace/application ID: `dev.example.flutteragenticstarter`; Android app label: `Flutter Agentic Starter`. Do not describe a native/package rename as completed.
+**Origin:** Flutter Agentic Starter. Current Dart package: `flutter_agentic_starter`; Android namespace/application ID: `dev.example.flutteragenticstarter`; Android app label: `SeeMate AI`. The launcher rename does not change the package identifiers.
 
 ## Sources of Truth
 

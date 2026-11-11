@@ -45,9 +45,9 @@ MVP can meet its telemetry policy.
   an integration baseline and pilot installed offline Vietnamese TTS.
 - **Complete when:** experiments on physical Android hardware demonstrate local
   model execution, Vietnamese OCR and speech-resource readiness, or document
-  specific gaps and the work needed to close them. Keep the full section 9.2
-  vocabulary: Wallet, Keys, and Bread need model/data work beyond COCO. Select
-  package versions after compatibility checks; confirm protocol sample counts,
+  specific gaps and the work needed to close them. Use the 16-class v1
+  vocabulary in PRD section 9.2. Wallet, Keys, and Bread are deferred beyond v1.
+  Select package versions after compatibility checks and confirm protocol sample counts,
   task limits, and pilot thresholds before locking independent test data.
 - **Dependency:** this establishes the adapters, resources, and feasibility
   evidence needed by milestones 2–5; it does not certify final model quality.
@@ -76,12 +76,12 @@ MVP can meet its telemetry policy.
 - **Complete when:** tests cover class/ID mapping, position boundaries, stability,
   target absence/unsupported targets, and suppression. Physical-device runs
   announce only qualifying matches, provide uncertainty guidance, and avoid
-  repeated speech or stale-session results. Record class coverage and per-class
-  quality on independent data; a baseline with missing required classes is not
-  a completed MVP recognition flow. Position output is never a distance or safe
-  route claim.
+  repeated speech or stale-session results. Record coverage and quality for all
+  16 required classes on independent data using the integrated build and
+  physical Android devices. This evidence is pending. Position output is
+  relative to the camera frame.
 - **Dependency:** milestones 1–2; fine-tune or replace the baseline as needed
-  to meet the full object vocabulary and agreed evaluation thresholds.
+  to meet the 16-class v1 vocabulary and agreed evaluation thresholds.
 
 ### 4. On-demand OCR → Vietnamese reading → stop playback
 

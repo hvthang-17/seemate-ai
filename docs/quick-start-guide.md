@@ -18,9 +18,27 @@ flutter run -t lib/main.dart
 | Production | [lib/main_production.dart](../lib/main_production.dart) |
 
 Each entry point selects `ConfigurationProfile.current` before calling
-`initializeFlutterApp`. The current app opens the starter Home example, which
-loads cities from an HTTP API. Camera/AI and voice flows are target designs
-described in the [PRD](../tasks/prd-seemate-ai.md), not implemented features.
+`initializeFlutterApp`. The app opens the SeeMate AI assistance screen.
+Use the [Android evaluation build](evaluation/text_speech/n3-03-voice-commands.md)
+to bundle the Zipformer and EfficientDet models for device testing.
+
+On the first Android launch, the usage guide can read itself with an installed
+offline Vietnamese voice. With accessibility navigation active, use the guide's
+Listen button to start speech. Closing the guide stores a local flag. Open
+**Settings → Usage guide** to read or hear it again.
+
+On Windows, check the Java version reported by `flutter doctor -v`. If
+Flutter selects Android Studio's Java 25, point Flutter at an installed
+JDK 21 before running the app. Gradle 8.14.3 supports JDK 21.
+
+```powershell
+flutter config --jdk-dir "C:\Program Files\Java\jdk-21.0.11"
+flutter doctor -v
+flutter run -d 4b3fef9a
+```
+
+Use the path to your JDK 21 installation and the device ID from
+`flutter devices`. The JDK setting applies to Flutter on this machine.
 
 ## Build a feature
 

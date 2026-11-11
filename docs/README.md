@@ -38,6 +38,7 @@ and the [open decisions register](../tasks/prd-seemate-ai.md#96-open-decisions-a
 - [Three-person work plan](team-work-plan.md): file ownership, task dependencies, and push/review/merge gates.
 - Member guides: [N1 platform/UI](team-member-01-platform.md), [N2 detection](team-member-02-detection.md), [N3 OCR/speech](team-member-03-ocr-speech.md).
 - [Evaluation protocol](evaluation-protocol.md): scoring and evidence procedure; execution and provisional-threshold confirmation are pending.
+- [Zipformer voice commands on Android](evaluation/text_speech/n3-03-voice-commands.md): model files, APK build and Realme 5i evaluation.
 
 ## State model
 

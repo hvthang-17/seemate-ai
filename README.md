@@ -147,6 +147,8 @@ Available entry points:
 - `lib/main_production.dart`
 
 See the [quick start](docs/quick-start-guide.md) for setup and focused tests.
+For an Android evaluation APK with offline Vietnamese voice commands, follow
+the [Zipformer Vietnamese 30M int8 setup](docs/evaluation/text_speech/n3-03-voice-commands.md).
 
 ## Widgetbook
 
@@ -223,7 +225,7 @@ The Home feature is the reference implementation:
 The product is SeeMate AI; the checked-in technical identity still comes from
 the starter:
 
-- Android app label: `Flutter Agentic Starter`
+- Android app label: `SeeMate AI`
 - Dart package: `flutter_agentic_starter`
 - Organization: `Example`
 - Android namespace/application ID: `dev.example.flutteragenticstarter`

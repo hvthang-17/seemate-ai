@@ -89,8 +89,9 @@ G0 phải trả lời bằng chữ ký Dart và test, không chỉ bằng sơ đ
 - N1 cung cấp pixel format/planes/stride và metadata orientation/crop. N2 chuẩn
   bị tensor theo artifact và chuyển box về hệ tọa độ G0. Chỉ một bên áp dụng
   mỗi transform; không xoay ảnh hai lần hoặc lấy zone từ preview đã crop khác.
-- Mọi result chứa frame/session ID theo contract; kết quả đến sau cancel không
-  được gọi thành công cho request mới. `dispose`/close idempotent theo G0.
+- Mỗi lần `detect(frame)` trả một Future cho đúng frame đó. N1 giữ frame ID,
+  session ID và phiên yêu cầu để loại kết quả đến sau cancel. Adapter giải
+  phóng tài nguyên theo contract G0 khi `dispose`.
 - N1 sở hữu tốc độ cấp frame và active mode; N2 báo busy/readiness theo contract,
   không tạo hàng đợi frame vô hạn. Chốt chính sách bỏ frame khi inference bận.
 - Với nhiều instance cùng class, G0 chốt tiêu chí chọn target và liên kết qua
@@ -120,7 +121,8 @@ thêm để N1 chuẩn bị; không tự sửa file chung.
    missing/corrupt model, invalid frame và runtime failure bằng kiểu đã chốt.
 3. Chuẩn bị tensor, giải mã class/confidence/box, áp dụng transform ngược;
    chỉ áp dụng NMS nếu đúng output contract cần nó, tránh NMS lặp vô ý.
-4. Viết manifest và bảng support; ghi rõ baseline chưa có Wallet/Keys/Bread.
+4. Viết manifest và bảng support cho 16 lớp v1. Ghi riêng Wallet/Keys/Bread là
+   các lớp được dời sang phiên bản sau.
 5. Chạy một fixture biết trước và live input khi camera N1 sẵn sàng; đo riêng
    initialization và inference, không gọi chúng là latency toàn tác vụ.
 
@@ -141,8 +143,20 @@ không có side effect âm thanh.
 
 **Cần code/làm:** lọc confidence; map box center qua biên cấu hình; chọn/giữ
 instance ổn định theo G0; target matching; reset buffer khi session/target đổi;
-trả không đủ tin cậy/không thấy target/không hỗ trợ đúng quy ước. Ba processed
-frames liên tiếp là giá trị pilot, không phải ba frame camera bất kỳ đã bỏ qua.
+trả không đủ tin cậy/không thấy target/không hỗ trợ đúng quy ước. Chỉ tính
+frame đã xử lý, bỏ qua frame camera bị drop.
+
+**Chính sách pilot đang chạy:** dùng confidence ≥ 0.50 và tâm bounding box
+trong hệ tọa độ ảnh đã xoay. Hai biên 0.33 và 0.66 thuộc vùng giữa. Ghép một-một
+box cùng lớp với IoU từ 0.50 trở lên. Ưu tiên box ở frame gần nhất, sau đó
+đến IoU và thứ tự kết quả đã xếp theo confidence. Chế độ nhận diện cần hai
+quan sát cùng vùng trong tối đa ba frame, cho phép bỏ sót một frame. Chế độ
+tìm vật cần ba quan sát liên tiếp cùng vùng. Khi đổi vùng, bắt đầu lại từ
+một. Chỉ trả vật đã ổn định và có box trong frame hiện tại, xếp theo
+confidence. Lỗi suy luận ngắt chuỗi ở cả hai chế độ.
+Đổi phiên camera, thao tác, mục tiêu, độ xoay, kích thước frame hoặc ngưỡng
+confidence bắt đầu chuỗi mới. Contract phân biệt đang xác nhận, không có kết
+quả đủ ngưỡng và mục tiêu ngoài phạm vi model.
 
 **Bảng test bắt buộc:**
 
@@ -162,14 +176,15 @@ N3 nhận được key/zone cần cho speech và không có suppression thứ ha
 
 ## 7. Task N2-03 — model cuối, dữ liệu và chất lượng
 
-Danh mục phải giữ đủ 19 lớp: Phone, Wallet, Keys, Backpack, Bottle, Cup, Apple,
-Banana, Bread, Chair, Table, Book, Remote, Laptop, Keyboard, Mouse, Clock,
-Scissors, Umbrella. Kiểm tra nhãn thật thay vì giả định chuỗi ứng dụng là class ID.
+Danh mục v1 có 16 lớp theo [PRD §9.2](../tasks/prd-seemate-ai.md#92-object-classes-and-vietnamese-phrase-mapping),
+gồm Phone, Backpack, Bottle, Cup, Apple, Banana, Chair, Table (bàn ăn), Book,
+Remote, Laptop, Keyboard, Mouse, Clock, Scissors và Umbrella. Kiểm tra nhãn
+thật của model. Wallet, Keys và Bread được dời sang phiên bản sau.
 
 **Cần làm:** lập bảng coverage; thu/gán nhãn bổ sung; kiểm tra license/consent;
 split theo vật thể/buổi chụp/phòng; fine-tune hoặc thay model nếu baseline không
-đáp ứng; export artifact mobile; đo lại artifact đã export/quantize. Ngân sách
-200–300 ảnh/lớp cần train thêm chỉ là pilot, không bảo đảm đủ dữ liệu.
+đáp ứng tiêu chí v1; export artifact mobile nếu có huấn luyện; đo lại artifact
+được chọn. Ngân sách 200–300 ảnh/lớp cần train thêm là ước lượng cho pilot.
 
 Khóa test set trước khi chỉnh confidence. Có người thứ hai kiểm annotation.
 Không đưa ảnh từ cùng video gần nhau sang train và test; không thay test set
@@ -182,15 +197,17 @@ fixed-threshold precision/recall không phải mAP. Precision ≥90%, recall ≥
 tại IoU ≥0.5 là mục tiêu pilot cần xác nhận; phải chốt cách áp dụng từng lớp
 hay aggregate trước final evaluation. Không coi confidence 0.50 là 50% accuracy.
 
-Đạt task model cuối khi đủ coverage và có bằng chứng đáp ứng ngưỡng đã thống
-nhất. Nếu thiếu lớp hoặc không đạt, báo blocker, có thể push report/source dạng
-draft; không đánh dấu N2-03 hoàn thành hoặc tự cắt phạm vi PRD.
+Đạt task model khi đủ 16 lớp và có bằng chứng đáp ứng ngưỡng đã thống nhất.
+Bằng chứng trên thiết bị Android thật với APK tích hợp còn chờ N2-04. Nếu
+thiếu lớp v1 hoặc chưa đạt ngưỡng, báo blocker và giữ report/source ở dạng draft.
 
 ## 8. Task N2-04 — đo trên build tích hợp
 
 **Điều kiện:** N1-04 đã merge, có APK/checksum cố định, protocol/config/test
-manifest khóa. Phối hợp N1 để chạy đúng ba profile thiết bị đang có, không tự
-coi emulator thay điện thoại thật.
+manifest khóa. Có thể đo sớm với baseline để tìm lỗi. Để nghiệm thu, dùng APK
+đã tích hợp model cuối từ N2-03 và ghi cả checksum APK lẫn checksum model.
+Phối hợp N1 để chạy đúng ba profile thiết bị đang có và ghi riêng các kiểm tra
+trên emulator.
 
 N2 thực hiện bộ cảnh detection/zone/search; N1 điều khiển UI/camera session,
 N3 chịu speech coordinator. Ghi đúng commit/model/device, số mẫu, warm/cold,

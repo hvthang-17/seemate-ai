@@ -2,8 +2,9 @@
 
 Tài liệu giao việc chi tiết cho N3, đọc cùng [kế hoạch nhóm](team-work-plan.md),
 [PRD](../tasks/prd-seemate-ai.md) và [quy trình đánh giá](evaluation-protocol.md).
-Đây là chức năng cần xây dựng; repository hiện chưa có OCR, TTS, STT hay settings
-MVP. Các tên lớp/file bên dưới là đề xuất để chốt tại G0, không phải API đã có.
+Các tên lớp/file bên dưới thuộc kế hoạch thiết kế tại G0. Cấu hình đang thử
+trên máy thật được ghi trong [báo cáo bản tích hợp](evaluation/text_speech/n3-integrated-realme-5i.md)
+và [hướng dẫn kiểm thử lệnh](evaluation/text_speech/n3-03-voice-commands.md).
 
 ## 1. Kết quả N3 chịu trách nhiệm
 
@@ -173,6 +174,9 @@ không được ghi thành nghiệm thu, ghi hạn chế/blocker để xử lý 
 
 ## 7. N3-03 — Lệnh ngắn và persistence settings
 
+Bản đánh giá Android dùng **Zipformer Vietnamese 30M int8** qua
+Sherpa-ONNX. Xem [cách đóng gói model và kiểm thử lệnh](evaluation/text_speech/n3-03-voice-commands.md).
+
 **Đầu vào/phụ thuộc:** N3-01; G0 action/object/settings types; N1 đã thêm dependency
 và cấu hình microphone/persistence. UI touch không phụ thuộc STT thành công.
 
@@ -181,7 +185,9 @@ và cấu hình microphone/persistence. UI touch không phụ thuộc STT thành
 1. STT chỉ start khi được N1 yêu cầu; trả khả năng nhận tiếng Việt/offline và
    failure rõ. Không mở session liên tục hoặc tự bật cloud nếu offline thiếu.
 2. Parser chuẩn hóa khoảng trắng/chữ hoa-thường rồi ánh xạ các câu/alias đã thống
-   nhất: Nhận diện đồ vật, Tìm [vật hỗ trợ], Đọc văn bản, Dừng đọc. Phân biệt
+   nhất gồm Nhận diện đồ vật, Tìm [vật hỗ trợ], Đọc văn bản, Dừng đọc, Chụp
+   và Quay lại. Chụp chỉ lấy một frame trong chế độ Đọc văn bản. Quay lại
+   kết thúc chế độ đang chạy và trở về màn hình chọn chế độ. Phân biệt
    không hiểu với yêu cầu tìm class chưa hỗ trợ; không fuzzy-match tùy ý gây tìm sai.
 3. Dừng/đóng STT khi hết lượt, cancel, đổi session hoặc dispose; coordinator với
    N1 phải tránh engine nhận giọng của ứng dụng khi TTS đang phát.

@@ -63,13 +63,13 @@ and does not establish MVP validation.
 ## Identity
 
 - Product: SeeMate AI
-- Starter origin and current Android app label: `Flutter Agentic Starter`
+- Android app label: `SeeMate AI`
 - Dart package: `flutter_agentic_starter`
 - App ID: `dev.example.flutteragenticstarter`
 - Organization: `Example`
 
-These values describe the current checkout; the product name does not imply
-that the Dart package, Android identity, or launcher label has been renamed.
+The launcher label and icon are SeeMate AI. The Dart package and Android app
+ID retain the starter identifiers.
 Android currently inherits `flutter.minSdkVersion` rather than explicitly
 pinning the proposed API 29 minimum; target-device support still needs validation.
 

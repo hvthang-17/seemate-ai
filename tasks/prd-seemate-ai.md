@@ -34,7 +34,9 @@ The MVP combines three AI-assisted flows in one accessible app: object detection
 
 **Acceptance Criteria:**
 - [ ] The home screen exposes Object recognition, Find an object, Read text, and Stop reading as controls with Vietnamese accessibility labels.
-- [ ] The app accepts the Vietnamese commands “Nhận diện đồ vật”, “Tìm [tên đồ vật]”, “Đọc văn bản”, and “Dừng đọc”, or announces that it could not understand the command.
+- [ ] The app accepts the Vietnamese commands “Nhận diện đồ vật”, “Tìm [tên đồ vật]”, “Đọc văn bản”, “Dừng đọc”, “Chụp”, and “Quay lại”, or announces that it could not understand the command.
+- [ ] “Chụp” captures one frame for OCR in Read text mode. Outside that mode, the app asks the user to open Read text first.
+- [ ] “Quay lại” returns to the home mode chooser, cancels current assistance work, and closes the camera.
 - [ ] Every action has a touch alternative when speech recognition is unavailable.
 - [ ] Voice input uses user-initiated short command sessions; unavailable offline recognition never triggers an automatic cloud fallback.
 - [ ] Controls are reachable with Android TalkBack and have a minimum 48 x 48 dp touch target.
@@ -112,7 +114,7 @@ The MVP combines three AI-assisted flows in one accessible app: object detection
 1. **FR-1:** The system must run on Android and provide a Vietnamese-first accessible interface.
 2. **FR-2:** The system must obtain camera frames only after Android camera permission is granted.
 3. **FR-3:** The system must support object-recognition, target-object search, OCR reading, and stop-reading modes through both accessible touch controls and the defined Vietnamese voice commands.
-4. **FR-4:** Object detection must use an on-device TensorFlow Lite/LiteRT model and only report labels included in the model's supported class list.
+4. **FR-4:** Object detection must use an on-device TensorFlow Lite/LiteRT model and only report supported labels mapped to the v1 classes in section 9.2.
 5. **FR-5:** The system must filter detections by a configurable confidence threshold before visual or spoken reporting.
 6. **FR-6:** The system must classify a reported detection as left, center, or right from its bounding-box center; it must not expose this value as a distance measurement.
 7. **FR-7:** In target-search mode, the system must announce success only for a detection mapped to the requested target.
@@ -136,6 +138,7 @@ The MVP combines three AI-assisted flows in one accessible app: object detection
 - A guarantee that Speech-to-Text works offline on every Android device.
 - iOS, web, desktop, or wearable releases in the MVP.
 - Identifying people, faces, emotions, currency authenticity, medical information, or hazardous objects as safety-critical decisions.
+- Recognizing or searching for Wallet, Keys, and Bread. These classes are deferred beyond v1.
 
 ## 6. Design Considerations
 
@@ -181,26 +184,33 @@ Representative testing should include Samsung, Xiaomi, OPPO, and other common An
 
 ### 9.2. Object Classes and Vietnamese Phrase Mapping
 
-The MVP acceptance model must cover the following initial classes. A pretrained integration baseline may support a different or larger label set, but the app must report only supported MVP classes and must not be presented as meeting full MVP acceptance until this coverage is validated.
+On 2026-11-10, the v1 recognition and search scope was set to the 16 classes
+below. The model used for v1 acceptance must cover all 16. Class coverage and
+quality for the integrated build remain pending on physical Android devices.
 
 | Group | Object classes |
 | --- | --- |
-| Personal items | Phone, Wallet, Keys, Backpack |
+| Personal items | Phone, Backpack |
 | Drinks | Bottle, Cup |
-| Food | Apple, Banana, Bread |
-| Household items | Chair, Table, Book, Remote |
+| Food | Apple, Banana |
+| Household items | Chair, Table (dining table), Book, Remote |
 | Electronics | Laptop, Keyboard, Mouse |
 | Other items | Clock, Scissors, Umbrella |
 
-Initial Vietnamese target phrases map to application object keys as follows:
+When voice commands are integrated, the initial Vietnamese target phrases map
+to application object keys as follows:
 
 | Vietnamese command | Application object key |
 | --- | --- |
 | Tìm chai nước | Bottle |
 | Tìm điện thoại | Phone |
 | Tìm quyển sách | Book |
-| Tìm chìa khóa | Keys |
 | Tìm cái ghế | Chair |
+
+Wallet, Keys, and Bread are deferred beyond v1 and excluded from the target
+picker. If the detector receives a request for a deferred class, it returns an
+unsupported-target result. Voice handling of requests such as “Tìm chìa khóa”
+remains pending integration and verification.
 
 The object-detection model recognizes only classes it was trained to recognize. A separate command parser maps supported Vietnamese phrases and synonyms to application object keys, which are mapped to actual model class IDs using the selected artifact's metadata/label file. The keys above are not numeric model IDs. This parser must not be represented as unrestricted Vietnamese language understanding.
 
@@ -248,10 +258,10 @@ when a validated decision changes scope or acceptance criteria.
 
 | Item | Selected direction | Rationale | Evidence still required |
 | --- | --- | --- | --- |
-| Object-detection model and class mapping | EfficientDet-Lite0 in TensorFlow Lite format, CPU baseline; fine-tune or replace if needed to cover section 9.2 | Establish the camera-to-speech pipeline on mobile hardware while retaining the required object vocabulary | Exact artifact/version, source, license, checksum, label/ID mapping, full class coverage, and device benchmarks |
+| Object-detection model and class mapping | EfficientDet-Lite0 in TensorFlow Lite format, CPU baseline; validate all 16 v1 classes in section 9.2 | Establish the camera-to-speech pipeline on mobile hardware with the agreed v1 vocabulary | Exact artifact/version, source, license, checksum, label/ID mapping, all 16 classes, and device benchmarks |
 | Dataset and evaluation scenes | Combine appropriately licensed data with labeled images collected in representative indoor environments | Evaluate everyday objects and conditions relevant to Vietnamese users | Source/license or consent records, annotations, split manifest, and locked evaluation scenes |
 | Vietnamese OCR | ML Kit Text Recognition v2, Latin script, bundled model; `google_mlkit_text_recognition` as Flutter integration candidate; one image per request | Keep OCR available locally and avoid repeated speech from continuous processing | Pinned package/native configuration, Vietnamese ground-truth results, and offline runs |
-| Vietnamese voice resources | Installed offline `vi-VN` TTS voice; user-initiated short STT commands, with `speech_to_text` as integration candidate; no automatic cloud fallback | Reduce network dependence and unnecessary microphone use while preserving accessible touch controls | Per-device voice/resource availability, command accuracy, TTS/TalkBack coexistence, and stop behavior |
+| Vietnamese voice resources | Installed offline `vi-VN` TTS voice, user-initiated short STT commands, and Zipformer Vietnamese 30M int8 via Sherpa-ONNX in the [Android evaluation build](../docs/evaluation/text_speech/n3-03-voice-commands.md). No automatic cloud fallback. | Provide a local recognizer for the Android 10 test device while preserving accessible touch controls | Per-device voice/resource availability, command accuracy, TTS/TalkBack coexistence, stop behavior, and model licensing before release |
 | Benchmark devices | Three physical device profiles defined below, prioritizing available phones | Cover minimum hardware and manufacturer differences without requiring new purchases | Named devices, Android/RAM/engine versions, resource setup, and benchmark reports |
 | Quality and performance acceptance | Provisional targets and measurement rules below; retain section 9.3 values for the pilot | Measure recognition quality separately from position accuracy and end-to-end responsiveness | Pilot feasibility, fixed protocol and thresholds, per-class results, and latency/resource measurements |
 | User/accessibility evaluation | Pilot with 5–8 target users, fix issues, then run a confirmation round | Find usability failures early and assess each core task | Participant counts, protocol, consent, per-task outcomes, and open-defect report |
@@ -259,12 +269,12 @@ when a validated decision changes scope or acceptance criteria.
 
 #### Model coverage and dataset protocol
 
-EfficientDet-Lite0 pretrained on COCO is an integration baseline, not the final
-acceptance model. COCO labels do not include Wallet, Keys, or Bread; these
-require additional training data and model work. Map Phone to the actual
-`cell phone` label where applicable, and verify all other mappings, including
-Table, against the chosen model's semantics. Do not silently drop a required
-class or relabel an unrelated detection to claim coverage.
+EfficientDet-Lite0 pretrained on COCO is the integration baseline and a v1
+candidate. Map Phone to `cell phone` and limit Table to `dining table` in v1.
+Verify the mappings and per-class quality for all 16 required classes before
+acceptance. Fine-tune or replace the baseline if it misses the agreed v1
+coverage or quality criteria. Wallet, Keys, and Bread require model and data
+work for a later scope because the COCO label set lacks those classes.
 
 Start the data pilot with approximately 200–300 labeled images per class that
 needs additional training, then expand according to observed errors. This is
@@ -342,6 +352,5 @@ a recorded purpose and permitted data scope.
 - [ML Kit supported languages](https://developers.google.com/ml-kit/vision/text-recognition/v2/languages)
 - [ML Kit Android text recognition: bundled and unbundled models](https://developers.google.com/ml-kit/vision/text-recognition/v2/android)
 - [Flutter ML Kit text recognition integration](https://pub.dev/packages/google_mlkit_text_recognition)
-- [Android SpeechRecognizer](https://developer.android.com/reference/android/speech/SpeechRecognizer)
+- [Sherpa-ONNX offline Zipformer models](https://k2-fsa.github.io/sherpa/onnx/pretrained_models/offline-transducer/zipformer-transducer-models.html)
 - [Android TTS Voice network requirement](https://developer.android.com/reference/android/speech/tts/Voice)
-- [Flutter speech_to_text integration](https://pub.dev/packages/speech_to_text)

@@ -22,7 +22,7 @@ SeeMate AI phục vụ chủ yếu người dùng nói tiếng Việt. Trải ng
 
 ## Mục tiêu MVP
 
-- Cho phép kích hoạt nhận diện đồ vật, tìm đồ vật, đọc văn bản và dừng đọc bằng lệnh nói tiếng Việt hoặc điều khiển cảm ứng có thể truy cập.
+- Cho phép kích hoạt nhận diện đồ vật, tìm đồ vật, đọc văn bản, chụp ảnh trong chế độ đọc, dừng đọc và trở về màn hình chọn chế độ bằng lệnh nói tiếng Việt hoặc điều khiển cảm ứng có thể truy cập.
 - Nhận diện các lớp đồ vật được mô hình hỗ trợ, lọc kết quả không đủ tin cậy, rồi đọc tên và vị trí trái/giữa/phải.
 - Trích xuất văn bản tiếng Việt từ camera bằng OCR và đọc nội dung bằng Text-to-Speech.
 - Cho phép object detection và OCR hoạt động khi mất mạng nếu mô hình, gói OCR và dữ liệu giọng nói cần thiết đã được cài đặt.
@@ -39,18 +39,22 @@ SeeMate AI phục vụ chủ yếu người dùng nói tiếng Việt. Trải ng
 6. **Xử lý không chắc chắn:** khi ảnh tối, mờ, lệch hoặc kết quả dưới ngưỡng, ứng dụng đưa hướng dẫn điều chỉnh thay vì khẳng định kết quả.
 7. **Ngoại tuyến và lưu cục bộ:** không yêu cầu tài khoản; chỉ lưu cục bộ các cài đặt như tốc độ đọc, âm lượng, ngôn ngữ, phản hồi âm thanh và cấu hình chống lặp.
 
-## Phạm vi nhận diện ban đầu
+## Phạm vi nhận diện và tìm vật v1
 
-| Nhóm             | Lớp đồ vật                    |
-| ---------------- | ----------------------------- |
-| Đồ dùng cá nhân  | Phone, Wallet, Keys, Backpack |
-| Đồ uống          | Bottle, Cup                   |
-| Đồ ăn            | Apple, Banana, Bread          |
-| Đồ dùng gia đình | Chair, Table, Book, Remote    |
-| Thiết bị điện tử | Laptop, Keyboard, Mouse       |
-| Vật dụng khác    | Clock, Scissors, Umbrella     |
+| Nhóm | Lớp đồ vật |
+| --- | --- |
+| Đồ dùng cá nhân | Phone, Backpack |
+| Đồ uống | Bottle, Cup |
+| Đồ ăn | Apple, Banana |
+| Đồ dùng gia đình | Chair, Table (bàn ăn), Book, Remote |
+| Thiết bị điện tử | Laptop, Keyboard, Mouse |
+| Vật dụng khác | Clock, Scissors, Umbrella |
 
-Ví dụ ánh xạ câu lệnh: “Tìm chai nước” → `Bottle`, “Tìm điện thoại” → `Phone`, “Tìm quyển sách” → `Book`, “Tìm chìa khóa” → `Keys`, và “Tìm cái ghế” → `Chair`. Bộ phân tích lệnh chỉ ánh xạ các cụm từ được hỗ trợ, không phải hệ thống hiểu ngôn ngữ tự do.
+V1 giới hạn ở 16 lớp trên. Wallet, Keys và Bread được dời sang phiên bản sau và
+không có trong danh sách chọn mục tiêu. Yêu cầu trực tiếp tới detector cho các
+lớp này trả kết quả chưa hỗ trợ. Khi tích hợp giọng nói, ánh xạ dự kiến gồm
+“Tìm chai nước” → `Bottle`, “Tìm điện thoại” → `Phone`, “Tìm quyển sách” →
+`Book` và “Tìm cái ghế” → `Chair`.
 
 ## Yêu cầu phi chức năng
 
@@ -91,6 +95,6 @@ Repository được khởi tạo từ Flutter Agentic Starter và đã dùng Riv
 
 ## Kiểm thử và an toàn người dùng
 
-Phương pháp đo detection/OCR, bộ cảnh, thiết bị, độ trễ và quy trình thử nghiệm người dùng nằm trong [Evaluation protocol](evaluation-protocol.md). Các tiêu chí nghiệm thu ở trên là yêu cầu chờ bằng chứng; ngưỡng chất lượng/hiệu năng bổ sung trong PRD 9.6 và quy mô thử nghiệm đề xuất cần được xác nhận qua pilot. Hiện chưa có kết quả benchmark hoặc nghiệm thu MVP.
+Phương pháp đo detection/OCR, bộ cảnh, thiết bị, độ trễ và quy trình thử nghiệm người dùng nằm trong [Evaluation protocol](evaluation-protocol.md). Các tiêu chí nghiệm thu ở trên vẫn chờ bằng chứng, bao gồm kết quả đủ 16 lớp trên bản tích hợp chạy trên thiết bị Android thật. Ngưỡng chất lượng, hiệu năng và quy mô thử nghiệm bổ sung trong PRD 9.6 cần được xác nhận qua pilot.
 
 Kiểm thử phải bao gồm object detection, OCR, lệnh thoại, Text-to-Speech, quyền camera, chế độ máy bay và TalkBack. Nếu mời người khiếm thị hoặc người có thị lực suy giảm tham gia, cần có sự đồng ý tự nguyện, giải thích mục đích, bảo vệ dữ liệu cá nhân và chỉ dùng các nhiệm vụ an toàn như tìm chai nước trên bàn, tìm điện thoại trong khung hình hoặc đọc nhãn sản phẩm. Không yêu cầu người tham gia thực hiện nhiệm vụ di chuyển nguy hiểm.

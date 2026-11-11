@@ -24,7 +24,7 @@ trong hướng dẫn chưa phải code đã tồn tại hoặc hợp đồng đ�
 | Người | Sau khi đọc tài liệu, phải giao gì trước khi triển khai adapter |
 | --- | --- |
 | N1 | Bản API G0, fake cho consumer, quy tắc session/buffer/cancellation, danh sách file chung cần cấu hình; PR cho hai người còn lại review |
-| N2 | Bảng 19 object key ↔ nhãn thực của baseline, lớp thiếu và phương án dữ liệu; định dạng tensor/frame cần từ camera; model artifact/source/license và yêu cầu dependency/assets gửi N1 |
+| N2 | Bảng 16 object key v1 ↔ nhãn thực của baseline, các lớp dời sang phiên bản sau và phương án dữ liệu; định dạng tensor/frame cần từ camera; model artifact/source/license và yêu cầu dependency/assets gửi N1 |
 | N3 | Kết quả khảo sát OCR bundled và vi-VN TTS/STT theo máy; contract speech/stop/settings cần dùng; dependency/native/ARB key request gửi N1 |
 
 Các khảo sát là deliverable tài liệu/feasibility, chưa phải task tính năng đã đạt.
@@ -104,6 +104,14 @@ N2/N3 có thể bắt đầu mà không cần sửa file N1. Dependency và ARB 
 được N1 thêm cùng G0 hoặc PR cấu hình nối tiếp. Thay đổi API sau đó phải có PR
 contract của N1 và review của người tiêu thụ trước khi sửa implementation.
 
+**Bản nháp local để review:** driver nhận session ID do controller tạo. Mỗi
+frame đi qua một consumer và bị bỏ nếu đang bận hoặc sai phiên. Driver cung cấp
+frame gốc chưa crop, với góc xoay theo chiều kim đồng hồ. N2 chuyển box về hệ
+tọa độ chuẩn hóa của toàn frame sau xoay. Notifier bỏ kết quả khi đổi mode,
+đổi vật cần tìm hoặc dừng đọc. N3 review quy tắc hủy OCR và việc `stop()` vô
+hiệu hóa yêu cầu phát đang chờ. Các kiểm tra này chạy với fake trong
+`test/core/camera/` và `test/features/assistance/`.
+
 ## Task và điều kiện được đưa lên PR
 
 Mỗi hàng là một PR nhỏ riêng; dùng task ID làm nhánh và tên PR. Các điều kiện
@@ -114,22 +122,22 @@ dưới đây bổ sung cho cổng push chung ở cuối tài liệu.
 | N1-01 | G0 | Camera adapter và vòng đời quyền/session | Chỉ mở sau cấp quyền; denial/permanent denial/revocation có trạng thái rõ; background/đổi mode/dispose đóng đúng; không backlog, không nhận kết quả session cũ; test fake và kiểm tra điện thoại thật |
 | N1-02 | G0 | Home hỗ trợ, controls tiếng Việt, settings UI dùng fake | Đủ nhận diện/tìm/đọc/dừng; TalkBack label/focus, vùng chạm 48dp, text scaling; Stop luôn tới được; widget/accessibility test pass |
 | N1-03 | G0 | Cấu hình MVP và CI | Tắt 5 dịch vụ telemetry trong PRD; kiểm tra đường khởi tạo và không phá bootstrap; bật `flutter test` trong CI; analyzer, tests, staging APK build thành công; ghi trigger thực tế, không nhận debug signing là production release |
-| N2-01 | G0, dependency PR | Baseline detection adapter, model manifest | Model chạy cục bộ trên điện thoại; checksum/source/license/labels có; input transform đúng contract; fake/unit test tensor-result mapping và typed failures; liệt kê đủ lớp có/thiếu; baseline chưa đủ lớp không ghi đạt MVP |
+| N2-01 | G0, dependency PR | Baseline detection adapter, model manifest | Model chạy cục bộ trên điện thoại; checksum/source/license/labels có; input transform đúng contract; fake/unit test tensor-result mapping và typed failures; đối chiếu đủ 16 lớp v1; kết quả smoke được ghi riêng với nghiệm thu |
 | N2-02 | N2-01 | Confidence, stability, zone, target search | Test đúng/sai class, target vắng/không hỗ trợ, nhiều vật, biên vùng/rotation; chỉ trả kết quả đủ điều kiện; không phát speech, không tự lưu frame |
-| N2-03 | N2-02 | Model cuối và báo cáo detection độc lập | Bao phủ đủ 19 lớp hoặc báo blocker; không tự bỏ Wallet/Keys/Bread; test set khóa độc lập; TP/FP/FN, precision/recall từng lớp, negative scenes, zone accuracy có mẫu số; ngưỡng chưa chốt ghi cần xác nhận |
+| N2-03 | N2-02 | Model v1 và báo cáo detection độc lập | Bao phủ đủ 16 lớp theo PRD §9.2; test set khóa độc lập; TP/FP/FN, precision/recall từng lớp, negative scenes, zone accuracy có mẫu số; ngưỡng chưa chốt ghi cần xác nhận |
 | N3-01 | G0, dependency PR | Offline TTS coordinator và stop | Check giọng vi-VN không cần mạng; thiếu tài nguyên có typed result; queue không chồng tiếng; stop/cancel không phát lại kết quả cũ; suppression một chỗ có test fake-clock; chạy được trên máy thật, có ghi đo stop |
 | N3-02 | G0, dependency PR | OCR adapter một ảnh/yêu cầu | Bundled Latin ML Kit; chữ có dấu/empty/failure/cancel được test; chạy airplane mode; báo CER theo protocol, tách clear/challenge; không log OCR/ảnh, không tự đọc kết quả ngoài coordinator |
 | N3-03 | N3-01 | Lệnh ngắn và settings repository | Parser đủ lệnh PRD + unsupported target; STT chủ động, không tự cloud fallback; settings khôi phục sau restart; test parser/storage/default/cancellation; thiếu offline STT vẫn trả trạng thái để UI dùng touch |
 | N1-04 | N1-01/02/03, N2-02, N3-01/02/03 đã merge | Wiring thật qua GetIt/provider và kiểm thử tích hợp | Nhận diện/tìm/đọc/dừng và settings đi xuyên các adapter thật; sai mode/session bị loại; không tồn tại hai camera owner hoặc hai TTS owner; TalkBack/TTS/STT overlap, thiếu quyền/model/voice, background/resume được kiểm tra |
-| N2-04 | N1-04 | Chạy bộ cảnh detection trên build tích hợp | N2 chịu dataset/annotation và kết quả detection/zone/search; report theo device/scene, failures/time-outs; không coi benchmark riêng adapter thay nghiệm thu toàn luồng |
+| N2-04 | N1-04 để đo baseline; N2-03 và model cuối đã nối vào APK để nghiệm thu | Chạy bộ cảnh detection trên build tích hợp | N2 chịu dataset/annotation và kết quả detection/zone/search; ghi APK/model checksum, device/scene và failures/time-outs; số đo baseline dùng để chẩn đoán |
 | N3-04 | N1-04 | Chạy bộ cảnh OCR/voice trên build tích hợp | N3 chịu transcription/CER, speech intelligibility, stop, STT fallback và settings; report riêng warm/cold, máy/engine và lỗi |
 | N1-05 | N2-03/04, N3-04, N1-04 | Nghiệm thu chung | N1 chạy network/lifecycle/session15phút và tổ chức pilot5–8 + confirmation; N2 kiểm tra ground truth/task tìm vật, N3 kiểm tra nội dung đọc/stop; N1 tổng hợp số liệu, device gaps, P0/P1, cập nhật roadmap chỉ khi đủ bằng chứng |
 
-Task N2-03 có thể kéo dài song song N3-01/02/03 và tích hợp baseline; thiếu model
-cuối không chặn demo kỹ thuật nhưng chặn đánh dấu hoàn thành recognition MVP.
-Trong hàng N2-03, báo blocker là cách báo tiến độ chưa đạt, không phải điều kiện
-thay thế cho bao phủ 19 lớp. Code cải thiện một phần có thể merge khi đạt gate
-code của PR và được ghi rõ partial; task/model acceptance vẫn để chưa hoàn thành.
+Task N2-03 có thể kéo dài song song N3-01/02/03 và tích hợp baseline. Wallet,
+Keys và Bread được dời khỏi v1 theo PRD §9.2. N2-03 chỉ đạt khi có bằng chứng
+bao phủ và chất lượng đủ 16 lớp theo protocol. Bằng chứng nghiệm thu trên APK
+tích hợp và thiết bị Android thật còn chờ N2-04. Code cải thiện một phần có thể
+merge khi đạt gate của PR và ghi rõ trạng thái partial.
 N1-05 chỉ đạt khi tiêu chí PRD đã được đo và đáp ứng; thiếu máy, mẫu hay ngưỡng
 được xác nhận phải ghi chưa đánh giá/blocker, không được coi là pass.
 
@@ -158,8 +166,9 @@ xin review chưa được kiểm chứng; có thể tách phần thuần logic t
 2. N1-01/02/03, N2-01/02 và N3-01/02/03 triển khai song song qua fake/contract.
    N2-03 thu thập/huấn luyện và khóa dữ liệu song song.
 3. N1 merge lần lượt các adapter, sinh DI từ source, rồi làm N1-04.
-4. N2-04 và N3-04 đo độc lập trên cùng APK/checksum; N1 chạy phần hệ thống và
-   kiểm thử người dùng. Sau sửa lỗi, đo lại phần bị ảnh hưởng trước N1-05.
+4. N2-04 có thể đo sớm trên build baseline. Nghiệm thu N2-04 và N3-04 dùng cùng
+   APK đã tích hợp model cuối từ N2-03. N1 chạy phần hệ thống và kiểm thử người
+   dùng. Sau sửa lỗi, đo lại phần bị ảnh hưởng trước N1-05.
 
 ## Cổng push, review và merge
 

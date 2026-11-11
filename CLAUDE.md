@@ -8,7 +8,7 @@ Product: SeeMate AI, an Android assistive app for blind and low-vision
 Vietnamese-speaking users. The repository is currently a Flutter Agentic Starter
 foundation with Home loading cities; camera/AI/voice flows are target features.
 The Dart package remains `flutter_agentic_starter`, Android namespace/app ID
-`dev.example.flutteragenticstarter`, and Android label `Flutter Agentic Starter`.
+`dev.example.flutteragenticstarter`, and Android label `SeeMate AI`.
 
 Read [README.md](README.md) first and follow [AGENTS.md](AGENTS.md), including
 its sources of truth and build/verification commands. The
